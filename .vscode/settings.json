@@ -4,8 +4,9 @@
         "editor.defaultFormatter": "vscode.typescript-language-features",
         "editor.formatOnSave": true
     },
-    "editor.formatOnSave": true,
     "[html]": {
-        "editor.defaultFormatter": "vscode.html-language-features"
+        "editor.defaultFormatter": "vscode.html-language-features",
+        "editor.formatOnSave": false
+
     }
 }
