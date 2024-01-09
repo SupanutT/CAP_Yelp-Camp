@@ -9,7 +9,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 
 const User = require('./models/user');
-const campgroundRoutes = require('./routes/campground');
+const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 

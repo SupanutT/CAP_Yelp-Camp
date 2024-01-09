@@ -14,7 +14,7 @@ db.once('open', () => {
     console.log('Database connected');
 });
 
-const sample = (array) => array[Math.floor(Math.random() * array.length)];
+const sample = (array) => array[ Math.floor(Math.random() * array.length) ];
 
 const seedDB = async () => {
     await Campground.deleteMany({});
@@ -22,7 +22,8 @@ const seedDB = async () => {
         const random923 = Math.floor(Math.random() * 923);
         const price = Math.floor(Math.random() * 1500) + 500;
         const camp = new Campground({
-            location: `${cities[random923].AMPHOE_E}, ${cities[random923].CHANGWAT_E}`,
+            author: '659da476dfee85db545edfcd',
+            location: `${cities[ random923 ].AMPHOE_E}, ${cities[ random923 ].CHANGWAT_E}`,
             title: `${sample(descriptors)} ${sample(places)}`,
             image: 'https://source.unsplash.com/collection/9046579',
             description:
