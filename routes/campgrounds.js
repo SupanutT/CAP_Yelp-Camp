@@ -7,13 +7,15 @@ const multer = require('multer');
 const { storage } = require('../cloudinary');
 const upload = multer({ storage });
 
-router.route('/')
+router
+    .route('/')
     .get(catchAsync(campgrounds.index))
     .post(isLoggedIn, upload.array('image'), validateCampground, catchAsync(campgrounds.createCampgrounds));
 
 router.get('/new', isLoggedIn, campgrounds.renderNewForm);
 
-router.route('/:id')
+router
+    .route('/:id')
     .get(catchAsync(campgrounds.showCampgrounds))
     .put(isLoggedIn, isAuthor, upload.array('image'), validateCampground, catchAsync(campgrounds.updateCampground))
     .delete(isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground));

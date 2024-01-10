@@ -26,7 +26,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => { console.log('Database Connected'); });
+db.once('open', () => {
+    console.log('Database Connected');
+});
 
 const app = express();
 
@@ -65,8 +67,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
 app.use('/', userRoutes);
 app.use('/campgrounds', campgroundRoutes);
 app.use('/campgrounds/:id/reviews', reviewRoutes);
@@ -88,4 +88,3 @@ app.use((err, req, res, next) => {
 app.listen(3000, () => {
     console.log('LISTENING ON PORT 3000');
 });
-

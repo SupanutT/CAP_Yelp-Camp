@@ -1,11 +1,18 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 const mongoose = require('mongoose');
 const Campground = require('../models/campground');
 const cities = require('./cities');
 const { places, descriptors } = require('./seedHelpers');
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapboxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapboxToken });
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
 });
 
 const db = mongoose.connection;
@@ -14,7 +21,7 @@ db.once('open', () => {
     console.log('Database connected');
 });
 
-const sample = (array) => array[ Math.floor(Math.random() * array.length) ];
+const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
     await Campground.deleteMany({});
@@ -23,18 +30,37 @@ const seedDB = async () => {
         const price = Math.floor(Math.random() * 1500) + 500;
         const camp = new Campground({
             author: '659da476dfee85db545edfcd',
-            location: `${cities[ random923 ].AMPHOE_E}, ${cities[ random923 ].CHANGWAT_E}`,
+            location: `${cities[random923].AMPHOE_E}, ${cities[random923].CHANGWAT_E}`,
             title: `${sample(descriptors)} ${sample(places)}`,
             description:
                 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. A, quae. Deleniti animi, amet ducimus fuga ab facilis voluptate nisi pariatur fugit veritatis ipsa totam sapiente architecto laudantium est incidunt dolorum.',
             price: price,
             images: [
-                { "url": "https://res.cloudinary.com/dgwfiyuty/image/upload/v1704888425/yelp-camp/ottgmhcl9j5rbb1yrter.jpg", "filename": "yelp-camp/ottgmhcl9j5rbb1yrter" },
-                { "url": "https://res.cloudinary.com/dgwfiyuty/image/upload/v1704888426/yelp-camp/cehpwhppiph7wan1ge2y.jpg", "filename": "yelp-camp/cehpwhppiph7wan1ge2y" },
-                { "url": "https://res.cloudinary.com/dgwfiyuty/image/upload/v1704888427/yelp-camp/f4kv6dzatawzekky8moa.jpg", "filename": "yelp-camp/f4kv6dzatawzekky8moa" },
-                { "url": "https://res.cloudinary.com/dgwfiyuty/image/upload/v1704888427/yelp-camp/c5mcrbaxfazzumjh4wzx.jpg", "filename": "yelp-camp/c5mcrbaxfazzumjh4wzx" }
+                {
+                    url: 'https://res.cloudinary.com/dgwfiyuty/image/upload/v1704888425/yelp-camp/ottgmhcl9j5rbb1yrter.jpg',
+                    filename: 'yelp-camp/ottgmhcl9j5rbb1yrter'
+                },
+                {
+                    url: 'https://res.cloudinary.com/dgwfiyuty/image/upload/v1704888426/yelp-camp/cehpwhppiph7wan1ge2y.jpg',
+                    filename: 'yelp-camp/cehpwhppiph7wan1ge2y'
+                },
+                {
+                    url: 'https://res.cloudinary.com/dgwfiyuty/image/upload/v1704888427/yelp-camp/f4kv6dzatawzekky8moa.jpg',
+                    filename: 'yelp-camp/f4kv6dzatawzekky8moa'
+                },
+                {
+                    url: 'https://res.cloudinary.com/dgwfiyuty/image/upload/v1704888427/yelp-camp/c5mcrbaxfazzumjh4wzx.jpg',
+                    filename: 'yelp-camp/c5mcrbaxfazzumjh4wzx'
+                }
             ]
         });
+        const geoData = await geocoder
+            .forwardGeocode({
+                query: camp.location,
+                limit: 1
+            })
+            .send();
+        camp.geometry = geoData.body.features[0].geometry;
         await camp.save();
     }
     console.log('SEEDING DONE');
